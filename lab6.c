@@ -23,9 +23,14 @@ int main(int argc, char *argv[])
 	if (serial_out == NULL || serial_in == NULL)
 		printf("fdopen failed \n"), exit(0);
 
+	disk_out=fopen("rail_voltages.dat","w");
+   	if(disk_out==NULL) disk_out=stdout,printf("couldn't open rail_voltages.dat using stdout\n");
+	
 	fprintf(serial_out, "Start\n");
-	while (fgets(buffer, 100, serial_in))
+	while (fgets(buffer, 100, serial_in)){
+		fputs(buffer,disk_out);
 		printf("%s", buffer);
+	}
 }
 
 int init()
