@@ -39,7 +39,7 @@ int init()
 	struct termios tc; // terminal control structure
 
 	//todo serial port should not be hard coded
-	fd1 = open("/dev/serial0", O_RDWR | O_NOCTTY);
+	fd1 = open("/dev/serial1", O_RDWR | O_NOCTTY);
 	if (fd1 < 1) {
 		printf("Failed to open serial port\n");
 		return 0;
