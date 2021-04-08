@@ -20,15 +20,20 @@ void update_clock_speed(void);
 
 
 int main()
-{ char buffer[100]="notStart";
+{ 
+  char buffer[100]="notStart";
+  double estimate;
+
+
   update_clock_speed();  //adjust OSCCAL
-  init_serial(); 
-  init_adc();  
+  init_serial();
+  init_adc();
   _delay_ms(1000); //let serial work itself out
   while(strncmp("Start",buffer,strlen("Start"))!=0) fgets(buffer,100,stdin);
   while(1) //raspberry pi controls reset line
   {
-    printf("%d\n",read_adc());
+    estimate = ((1.1)/read_adc()) * 0x3FF;
+    printf("%d\n",estimate);
   }    
 }
 
@@ -64,7 +69,7 @@ void update_clock_speed(void)
 void init_serial(void)
 {
    UBRR0H=0;
-   UBRR0L=51; // 9600 BAUD FOR 1MHZ SYSTEM CLOCK
+   UBRR0L=51; // 9600 BAUD FOR 8MHZ SYSTEM CLOCK
    UCSR0A=0;
    UCSR0C= (1<<USBS0)|(3<<UCSZ00) ;  // 8 BIT NO PARITY 2 STOP
    UCSR0B=(1<<RXEN0)|(1<<TXEN0)  ; //ENABLE TX AND RX ALSO 8 BIT
@@ -87,14 +92,14 @@ int serial_getchar(FILE * fp)
 {
    while((UCSR0A&(1<<RXC0)) == 0);  //WAIT FOR CHAR
    return UDR0;
-}     
+}
 void init_adc(void)
 {
-	ADMUX = (3<<REFS0) | 8; //temperature sensor 1.1V ref
+	ADMUX = (3<<REFS0) | 8; //Refference voltage is 1.1V
 	ADCSRA = (1<<ADEN) | (6<<ADPS0); // enable ADC, prescaler=64
 	ADCSRB = 0;
 	DIDR0 = 0;
-} 
+}
 int read_adc(void)
 {
     ADCSRA |= (1<<ADSC);
