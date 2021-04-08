@@ -33,7 +33,7 @@ int main()
   while(1) //raspberry pi controls reset line
   {
     estimate = ((1.1)/read_adc()) * 0x3FF;
-    printf("%d\n",estimate);
+    printf("The power rail is approximately %lf\n",estimate);
   }    
 }
 
