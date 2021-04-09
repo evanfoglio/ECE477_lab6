@@ -31,16 +31,10 @@ int main()
   init_adc();
   _delay_ms(1000); //let serial work itself out
 //  while(strncmp("Start",startbuf,strlen("Start"))!=0) fgets(buffer,100,stdin);
-	while(1){
-		fgets(buffer,5,stdin);//serial_getchar(&serial_stream);
-		printf("%c", buffer[0]);
-	}
-//	for(int i = 0; i < 6; i++){
-//	buffer[i] = serial_getchar(&serial_stream);
-//	}
 
   while(1) //raspberry pi controls reset line
   {
+    _delay_ms(1000);
     estimate = ((1.1)/read_adc()) * 0x3FF;
     dtostrf(estimate, 1, 6, num_buf);
     printf("The power rail is approximately %s\n",num_buf);
