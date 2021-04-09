@@ -25,11 +25,19 @@ int main(int argc, char *argv[])
 
 	disk_out=fopen("rail_voltages.dat","w");
    	if(disk_out==NULL) disk_out=stdout,printf("couldn't open rail_voltages.dat using stdout\n");
+//	while(1){
+//		fprintf(serial_out, "U");
+//	}
+//	fprintf(serial_out, "Start");
+
+	fprintf(serial_out, "U");
+	fgets(buffer, 100, serial_in);
+	printf("%s, %d\n", buffer, strlen(buffer));
 	
-	fprintf(serial_out, "Start\n");
 	while (fgets(buffer, 100, serial_in)){
 		fputs(buffer,disk_out);
 		printf("%s", buffer);
+		sleep(1);
 	}
 }
 
@@ -39,7 +47,7 @@ int init()
 	struct termios tc; // terminal control structure
 
 	//todo serial port should not be hard coded
-	fd1 = open("/dev/serial1", O_RDWR | O_NOCTTY);
+	fd1 = open("/dev/serial0", O_RDWR | O_NOCTTY);
 	if (fd1 < 1) {
 		printf("Failed to open serial port\n");
 		return 0;
@@ -47,8 +55,7 @@ int init()
 	tcgetattr(fd1, &tc);
 	tc.c_iflag = IGNPAR;
 	tc.c_oflag = 0;
-	tc.c_cflag = CS8 | CREAD |
-		     CLOCAL; //8 bit chars enable receiver no modem status lines
+	tc.c_cflag = CS8 | CREAD | CLOCAL; //8 bit chars enable receiver no modem status lines
 	tc.c_lflag = ICANON;
 
 	//todo baud rate should not be hard coded
