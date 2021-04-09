@@ -39,7 +39,7 @@ int main()
 
 		write(fd2, buffer, input_len);
 		
-		buffer[input_len] == '\0';
+		buffer[input_len] = '\0';
 		printf("%s", buffer);
 	}	
 	serialFlush(fd);
