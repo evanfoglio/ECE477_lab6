@@ -22,10 +22,11 @@ void update_clock_speed(void);
 
 
 int main()
-{ 
+{
+  int i;	
   char buffer[100]="notStart";
   unsigned char buf[6];
-  unsigned char start[6] = "Start"
+  unsigned char start[6] = "Start";
   float estimate;
   char num_buf[8]; 
   unsigned char startbuf[6];
@@ -41,7 +42,7 @@ int main()
 			if(buffer[i] == start[i]){
 				printf("hooray\n");
 			} else {
-				printf("No \n");
+				printf("No    \n");
 			}
 		}
 	}
@@ -124,7 +125,8 @@ unsigned char get_character()
 void init_adc(void)
 {
 	ADMUX = (3<<REFS0) | 8; //Refference voltage is 1.1V
-	ADCSRA = (1<<ADEN) | (6<<ADPS0); // enable ADC, prescaler=64
+	//8MHz / 64 = 125kHz
+	ADCSRA = (1<<ADEN) | (6<<ADPS0); // enable ADC, prescaler=64	
 	ADCSRB = 0;
 	DIDR0 = 0;
 }
