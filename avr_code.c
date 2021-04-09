@@ -29,11 +29,12 @@ int main()
   init_serial();
   init_adc();
   _delay_ms(1000); //let serial work itself out
-  while(strncmp("Start",buffer,strlen("Start"))!=0) fgets(buffer,100,stdin);
+//  while(strncmp("Start",buffer,strlen("Start"))!=0) fgets(buffer,100,stdin);
   while(1) //raspberry pi controls reset line
   {
-    estimate = ((1.1)/read_adc()) * 0x3FF;
-    printf("The power rail is approximately %lf\n",estimate);
+    //estimate = ((1.1)/read_adc()) * 0x3FF;
+    //printf("The power rail is approximately %lf\n",estimate);
+    printf("U");
   }    
 }
 
@@ -62,14 +63,15 @@ void update_clock_speed(void)
                  if(temp!=0xff) OSCCAL -=temp;
           }
   }
+ 
 }
 
 /* Initializes AVR USART for 9600 baud (assuming 8MHz clock) */
 /* 8MHz/(16*(51+1)) = 9615 about 0.2% error                  */
 void init_serial(void)
 {
-   UBRR0H=0;
-   UBRR0L=51; // 9600 BAUD FOR 8MHZ SYSTEM CLOCK
+   UBRR0H=0;//(unsigned char)(1843200/16/9600-1 >> 8) ;
+   UBRR0L=51;//(unsigned char)(1843200/16/9600-1); // 9600 BAUD FOR 8MHZ SYSTEM CLOCK
    UCSR0A=0;
    UCSR0C= (1<<USBS0)|(3<<UCSZ00) ;  // 8 BIT NO PARITY 2 STOP
    UCSR0B=(1<<RXEN0)|(1<<TXEN0)  ; //ENABLE TX AND RX ALSO 8 BIT
