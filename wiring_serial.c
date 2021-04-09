@@ -4,14 +4,15 @@
 
 int main()
 {
-
-	usleep(1000000);
 	//serial descriptor
 	int fd;
 	int input_len;
 	char buffer[100];
 	int i;
 	fd  = serialOpen("/dev/serial0", 9600);
+	
+	usleep(1000000);
+	
 	if(fd < 0){
 		printf("cannot open \n");
 		return -1;
