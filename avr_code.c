@@ -7,6 +7,7 @@
 #define F_CPU 8000000UL
 #include <util/delay.h>
 #include <string.h>
+#include <stdlib.h>
 
 int serial_putchar(char, FILE *);
 int serial_getchar(FILE *);
@@ -14,7 +15,7 @@ static FILE serial_stream = FDEV_SETUP_STREAM (serial_putchar, serial_getchar, _
 
 void init_serial(void);
 void init_adc(void);
-int read_adc(void);
+unsigned int read_adc(void);
 
 void update_clock_speed(void);
 
@@ -22,18 +23,27 @@ void update_clock_speed(void);
 int main()
 { 
   char buffer[100]="notStart";
-  double estimate;
-
-
+  float estimate;
+  char num_buf[8]; 
+  unsigned char startbuf[6];
   update_clock_speed();  //adjust OSCCAL
   init_serial();
   init_adc();
   _delay_ms(1000); //let serial work itself out
-  while(strncmp("Start",buffer,strlen("Start"))!=0) fgets(buffer,100,stdin);
+//  while(strncmp("Start",startbuf,strlen("Start"))!=0) fgets(buffer,100,stdin);
+	while(1){
+		fgets(buffer,5,stdin);//serial_getchar(&serial_stream);
+		printf("%c", buffer[0]);
+	}
+//	for(int i = 0; i < 6; i++){
+//	buffer[i] = serial_getchar(&serial_stream);
+//	}
+
   while(1) //raspberry pi controls reset line
   {
     estimate = ((1.1)/read_adc()) * 0x3FF;
-    printf("The power rail is approximately %lf\n",estimate);
+    dtostrf(estimate, 1, 6, num_buf);
+    printf("The power rail is approximately %s\n",num_buf);
   }    
 }
 
@@ -91,7 +101,7 @@ int serial_putchar(char val, FILE * fp)
 //note:2) if multiple characters come in and are not read, they will be lost
 int serial_getchar(FILE * fp)
 {
-   while((UCSR0A&(1<<RXC0)) == 0);  //WAIT FOR CHAR
+   while(!(UCSR0A&(1<<RXC0)));  //WAIT FOR CHAR
    return UDR0;
 }
 void init_adc(void)
@@ -101,7 +111,7 @@ void init_adc(void)
 	ADCSRB = 0;
 	DIDR0 = 0;
 }
-int read_adc(void)
+unsigned int read_adc(void)
 {
     ADCSRA |= (1<<ADSC);
     while(ADCSRA & (1<<ADSC)); //wait for coversion

@@ -28,16 +28,16 @@ int main(int argc, char *argv[])
 //	while(1){
 //		fprintf(serial_out, "U");
 //	}
-//	fprintf(serial_out, "Start");
+	fprintf(serial_out, "Start");
 
-	fprintf(serial_out, "U");
-	fgets(buffer, 100, serial_in);
-	printf("%s, %d\n", buffer, strlen(buffer));
+//	fprintf(serial_out, "U");
+//	fgets(buffer, 100, serial_in);
+//	printf("%s, %d\n", buffer, strlen(buffer));
 	
-	while (fgets(buffer, 100, serial_in)){
-		fputs(buffer,disk_out);
+	while(fgets(buffer, 100, serial_in)){
+		//fputs(buffer,disk_out);
 		printf("%s", buffer);
-		sleep(1);
+//		sleep(1);
 	}
 }
 
