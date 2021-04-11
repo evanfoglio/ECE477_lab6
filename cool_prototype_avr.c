@@ -35,32 +35,37 @@ int main()
   init_serial();
   init_adc();
   _delay_ms(1000); //let serial work itself out
-//  while(strncmp("Start",startbuf,strlen("Start"))!=0) fgets(buffer,100,stdin);
-	//while(1){
-		//fgets(buffer,5,stdin);//serial_getchar(&serial_stream);
-		//printf("%c", buffer[0]);
-	//}
-//	for(int i = 0; i < 6; i++){
-//	buffer[i] = serial_getchar(&serial_stream);
-//	}
 
   while(1) //raspberry pi controls reset line
   {
+    //If the value is at 100, don't increace it
     if(value_len < 100){
     	value_len += 1;
     }
+
+    //Calculate the voltage from the 1024 input
     estimate = ((1.1)/read_adc()) * 0x3FF;
+
+    //Sets the current value to estimate
     values[current_value] = estimate;
+
+    //Sum is 0
     sum = 0;
     for(i = 0; i < value_len; i++){
 	    sum += values[i];
     }
+
+    //The average is the sum over the number of values
     sum /= current_value;
+
+    //If it gets to 100, reset otherwise go to the next
     if(current_value == 100){
 	    current_value = 0;
     } else {
 	    current_value +=1;
     }
+
+    //Convert to string
     dtostrf(sum, 1, 6, num_buf);
     printf("The power rail is approximately %s\n",num_buf);
   }    
@@ -130,6 +135,8 @@ void init_adc(void)
 	ADCSRB = 0;
 	DIDR0 = 0;
 }
+
+//Read ADC pin and returning the value
 unsigned int read_adc(void)
 {
     ADCSRA |= (1<<ADSC);
